@@ -5,6 +5,30 @@
 \usepackage{fancybox}
 \usepackage{color}
 
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}% http://ctan.org/pkg/algorithmicx
+\usepackage{lipsum}% http://ctan.org/pkg/lipsum
+\usepackage{xifthen}% http://ctan.org/pkg/xifthen
+\usepackage{needspace}% http://ctan.org/pkg/needspace
+\usepackage{hyperref}% http://ctan.org/pkg/hyperref
+
+% ================ ALGORITHM ENVIRONMENT ================
+\newcounter{numberedAlg}% Algorithm counter
+\newenvironment{numberedAlg}[1][]%
+  {% \begin{numberedAlg}[#1]
+    \needspace{2\baselineskip}% At least 2\baselineskip required, otherwise break
+    \noindent \rule{\linewidth}{1pt} \endgraf% Top rule
+    \refstepcounter{numberedAlg}% For correct reference of algorithm
+    \centering \textsc{Algorithm}~\thenumberedAlg%
+    \ifthenelse{\isempty{#1}}{}{:\ #1}% Typeset name (if provided)
+  }{% \end{numberedAlg}
+  \noindent \rule{\linewidth}{1pt}% Bottom rule
+  }%
+
 \usetheme{Antibes}
 \usecolortheme{beaver}
 \title[AES Timing Attacks]{AES Timing Attacks}
@@ -107,10 +131,33 @@ a large enough number of \emph{random} AES encryption that use the \emph{same ke
 be lower when $\langle l_i \rangle = \langle l_j \rangle$ than when $\langle l_i \rangle \not= \langle l_j \rangle$
 
 	\medskip
-
-	That's it! We may not build an attack based on this result.
+	
+	Note: The table lookup indices must be \emph{independent} for random plaintexts.
 \end{frame}
-xtbf
+
+\begin{frame}
+	\frametitle{Cache Collisions (cont'd)}
+	Let $a$ and $b$ be two memory addresses looked up in memory. Let $\langle a \rangle$ and $\langle b \rangle$ 
+	denote the MSBs of $a$ and $b$, respectively. 
+	\begin{itemize}
+		\item Cache memory is organized into \emph{lines}
+		\begin{itemize}
+			\item MSB is mapped to the cache line index, LSB is mapped to the line (block) offset
+		\end{itemize}
+		\item Reads on $a$ and $b$ cause a collision if $\langle a \rangle = \langle b \rangle$ (assuming other memory reads
+		have not evicted (or invalidated) $a$ or $b$ from the cache. 
+		\item If $\langle a \rangle \not= \langle b \rangle$ then a cache collision \emph{might} occur.
+		\item We cannot say for certain whether or not the lower LSBs are equivalent...
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Attacks from Cache Collisions}
+	\begin{center}
+	That's it! We may not build an attack based on this result.
+	\end{center}
+\end{frame}
+
 \section{Cache Timing Attacks on AES}
 \subsection{LUT-Based Implementations of AES}
 \begin{frame}
@@ -124,6 +171,53 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 \end{align*}
 \end{frame}
 
+\subsection{First Round Attack}
+\begin{frame}
+	\frametitle{First Round}
+	TODO: image of AES lookup after first round
+	\begin{itemize}
+		\item First round: $x_i^{0} = p_i \oplus k_i$
+		\item With the T-box implementation, $x_0^0$, $x_4^0$, $x_8^0$, and $x_{12}^0$ are 
+		used as indices into $T_0$
+		\item If we are looking for cache collisions, we must consider input bytes of the same ``family'' 
+		(i.e. incides into the same T-box)
+	\end{itemize}
+	\begin{center}
+		\langle x_i^0 \rangle = \langle x_j^0 \rangle & \Rightarrow \\
+		& \langle p_i \rangle \oplus \langle k_i \rangle = \langle p_j \rangle \oplus \langle k_j \rangle \Rightarrow \\
+		& \langle p_i \rangle \oplus \langle p_j \rangle = \langle k_i \rangle \oplus \langle k_j \rangle \Rightarrow
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{First Round Attack Algorithm}
+	\begin{numberedAlg}[FirstRoundAttack($N_s$)]
+	\label{eea}
+	\begin{algorithmic}[1]
+		\State $n \gets 2^8 - 1$
+		\State $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
+		\For {$i = 0 \to N_s}
+			\State $P \gets RandomBytes(16)$
+			\State $start \gets time()$
+			\State $C \gets E_K(P)$
+			\State $end \gets time(), tt \gets (start - end)$
+			\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
+		\EndFor
+		\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
+		\State $mi,mj \gets min(t)$ \Comment{Use t-test if necessary}
+		\State $\langle k_{mi} \rangle \oplus \langle k_{mj} \rangle \gets \langle p_{mi} \rangle \oplus \langle p_{mj} \rangle$
+	\end{algorithmic}
+	\end{numberedAlg} 
+\end{frame}
+
+\begin{frame}
+	\frametitle{First Round Attack Algorithm (cont'd)}
+	TODO: show how selection of the six equations works... circle relations on the matrix...
+	0/4, 0/8, 0/12, 4/8, 4/12, 8/12 (six for each T-box), can try to solve from there
+	Limitation: We only know the upper bytes, we cna't figure out the block offset...
+\end{frame}
+
+\subsection{Last Round Attack}
 \begin{frame}
 	\frametitle{The Last Round}
 	When $i = 10$, the lookup table is just the S-box $S$. At this point, the ciphertext $C$ is:
@@ -135,14 +229,12 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 \end{align*}
 \end{frame}
 
-\subsection{First Round Attack}
-\begin{frame}
-	\frametitle{First Round}
-\end{frame}
-
-\subsection{Last Round Attack}
 \begin{frame}
 	\frametitle{Final Round}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Final Round Attack Algorithm}
 \end{frame}
 
 \begin{frame}
