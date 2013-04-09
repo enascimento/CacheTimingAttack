@@ -1,0 +1,19 @@
+\frametitle{First Round Attack Algorithm}
+\begin{numberedAlg}[FirstRoundAttack($N_s$)]
+\label{eea}
+\begin{algorithmic}[1]
+\State $n \gets 2^8 - 1$
+\State $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
+\For {$i = 0 \to N_s$}
+\State $P \gets RandomBytes(16)$
+\State $start \gets time()$
+\State $C \gets E_K(P)$
+\State $end \gets time()$
+\State $tt \gets (start - end)$
+\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
+\EndFor
+\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
+\State $mi,mj \gets min(t)$ \Comment{Use t-test if necessary}
+\State $\langle k_{mi} \rangle \oplus \langle k_{mj} \rangle \gets \langle p_{mi} \rangle \oplus \langle p_{mj} \rangle$
+\end{algorithmic}
+\end{numberedAlg}

@@ -182,25 +182,25 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 		\item If we are looking for cache collisions, we must consider input bytes of the same ``family'' 
 		(i.e. incides into the same T-box)
 	\end{itemize}
-	\begin{center}
-		\langle x_i^0 \rangle = \langle x_j^0 \rangle & \Rightarrow \\
-		& \langle p_i \rangle \oplus \langle k_i \rangle = \langle p_j \rangle \oplus \langle k_j \rangle \Rightarrow \\
-		& \langle p_i \rangle \oplus \langle p_j \rangle = \langle k_i \rangle \oplus \langle k_j \rangle \Rightarrow
-	\end{center}
+	\begin{align*}
+		\langle x_i^0 \rangle = \langle x_j^0 \rangle & \Rightarrow \langle p_i \rangle \oplus \langle k_i \rangle = \langle p_j \rangle \oplus \langle k_j \rangle \\
+		&  \Rightarrow \langle p_i \rangle \oplus \langle p_j \rangle = \langle k_i \rangle \oplus \langle k_j \rangle 
+	\end{align*}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
 	\frametitle{First Round Attack Algorithm}
 	\begin{numberedAlg}[FirstRoundAttack($N_s$)]
 	\label{eea}
 	\begin{algorithmic}[1]
 		\State $n \gets 2^8 - 1$
 		\State $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
-		\For {$i = 0 \to N_s}
+		\For {$i = 0 \to N_s$}
 			\State $P \gets RandomBytes(16)$
 			\State $start \gets time()$
 			\State $C \gets E_K(P)$
-			\State $end \gets time(), tt \gets (start - end)$
+			\State $end \gets time()$
+			\State $tt \gets (start - end)$
 			\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
 		\EndFor
 		\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
@@ -223,7 +223,7 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 	When $i = 10$, the lookup table is just the S-box $S$. At this point, the ciphertext $C$ is:
 \begin{align*}
 C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}] \oplus k_2^{10}, S[x_{15}^{10}] \oplus k_3^{10}, \\
-& S[x_4^{10}] \opus k_5^{10}, S[x_9^{10}] \oplus k_6^{10}, S[x_{14}^{10}] \oplus k_7^{10}, S[x_3^{10}] \oplus k_7^{10}, \\
+& S[x_4^{10}] \oplus k_5^{10}, S[x_9^{10}] \oplus k_6^{10}, S[x_{14}^{10}] \oplus k_7^{10}, S[x_3^{10}] \oplus k_7^{10}, \\
 & S[x_8^{10}] \oplus k_8^{10}, S[x_{13}^{10}] \oplus k_9^{10}, S[x_2^{10}] \oplus k_{10}^{10}, S[x_7^{10}] \oplus k_{11}^{10}, \\
 & S[x_{12}^{10}] \oplus k_{12}^{10}, S[x_{1}^{10}] \oplus k_{13}^{10}, S[x_6^{10}] \oplus k_{14}^{10}, S[x_{11}^{10}] \oplus k_{15}^{10}\} 
 \end{align*}
