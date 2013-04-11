@@ -115,6 +115,7 @@ In reality, it's hard to prevent additional information from being leaked at run
 \begin{frame}
 	\frametitle{Cache Memory}
 	TODO: how it's arranged, lines, and whatnot...
+	TODO: image of memory layout for the T\_boxes side by side..., and how cache lines may spread across all of them...
 
 $\langle l_i \rangle = \langle l_j \rangle$ are the lower bits of the data entry (data is put into cache based on its MSbits)
 \end{frame}
@@ -154,7 +155,7 @@ be lower when $\langle l_i \rangle = \langle l_j \rangle$ than when $\langle l_i
 \begin{frame}
 	\frametitle{Attacks from Cache Collisions}
 	\begin{center}
-	That's it! We may not build an attack based on this result.
+	That's it! We may now build an attack based on this result.
 	\end{center}
 \end{frame}
 
@@ -201,9 +202,9 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 			\State $C \gets E_K(P)$
 			\State $end \gets time()$
 			\State $tt \gets (start - end)$
-			\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
+			\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
 		\EndFor
-		\State $t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets t[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
+		\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
 		\State $mi,mj \gets min(t)$ \Comment{Use t-test if necessary}
 		\State $\langle k_{mi} \rangle \oplus \langle k_{mj} \rangle \gets \langle p_{mi} \rangle \oplus \langle p_{mj} \rangle$
 	\end{algorithmic}
@@ -212,9 +213,41 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 
 \begin{frame}
 	\frametitle{First Round Attack Algorithm (cont'd)}
-	TODO: show how selection of the six equations works... circle relations on the matrix...
-	0/4, 0/8, 0/12, 4/8, 4/12, 8/12 (six for each T-box), can try to solve from there
-	Limitation: We only know the upper bytes, we cna't figure out the block offset...
+\begin{figure}
+\centering
+\includegraphics[scale = 0.3]{images/first.png}
+\end{figure}	
+	
+%	TODO: show how selection of the six equations works... circle relations on the matrix...
+%	0/4, 0/8, 0/12, 4/8, 4/12, 8/12 (six for each T-box), can try to solve from there
+%	Limitation: We only know the upper bytes, we cna't figure out the block offset...
+\end{frame}
+
+\begin{frame}
+	\frametitle{First Round Attack Algorithm (cont'd)}
+\begin{figure}
+\centering
+\includegraphics[scale = 0.3]{images/firstCircled.png}
+\end{figure}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{First Round Limitation}
+%	TODO: show how selection of the six equations works... circle relations on the matrix...
+%	0/4, 0/8, 0/12, 4/8, 4/12, 8/12 (six for each T-box), can try to solve from there
+%	Limitation: We only know the upper bytes, we cna't figure out the block offset...
+We only know that $\langle k_0 \rangle \oplus \langle k_4 \rangle = \Delta_1$, $\langle k_0 \rangle \oplus \langle k_8 \rangle = \Delta_2$,
+$\langle k_0 \rangle \oplus \langle k_{12} \rangle = \Delta_3$, $\langle k_4 \rangle \oplus \langle k_8 \rangle = \Delta_4$, 
+$\langle k_4 \rangle \oplus \langle k_{12} \rangle = \Delta_5$, and $\langle k_8 \rangle \oplus \langle k_{12} \rangle = \Delta_6$.
+
+\bigskip
+
+Of course, there exists \textbf{18} other equations we can derive for $T_1$, $T_2$, and $T_3$.
+
+\bigskip
+
+We cannot determine the lower $\log_2$ bits of each key... What to do now?
+
 \end{frame}
 
 \subsection{Last Round Attack}
@@ -230,11 +263,76 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Final Round}
+	\frametitle{Final Round Collisions}
+	Let $x_s$ and $x_t$ be two random bytes in the last round. 
+	
+	\bigskip
+	
+	We will always have that $c_i = k_i^{10} \oplus S[x_s]$ and $c_j = k_j^{10} \oplus S[x_t]$. If $x_s = x_t$, then a collision \emph{will usually} occur
+	and $c_i = k_i^{10} \oplus \alpha$ and $c_j = k_j^{10} \oplus \alpha$.
+	
+	\bigskip
+
+	Therefore, $c_i \oplus c_j = k_i^{10} \oplus k_j^{10}$
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Final Round Misses}
+	
+	What if $x_s \not= x_t$?
+	
+	\bigskip 
+	
+	$c_i \oplus c_j \not= k_i^{10} \oplus k_j^{10} \Rightarrow$ two different values came out of the LUT!
+	
+	\bigskip
+	
+	The \emph{S-box nonlinearity} means that the difference between $S[x_s]$ and $S[x_t]$ \emph{does not} imply a similar difference between $x_s$ and $x_t$. 
+	
+	\bigskip
+	
+	 If $c_i \oplus c_j \not= k_i^{10} \oplus k_j^{10}$, then $x_s$ and $x_t$ are two \emph{random} values.
 \end{frame}
 
 \begin{frame}
 	\frametitle{Final Round Attack Algorithm}
+	\begin{numberedAlg}[LastRoundAttack($N_s$)]
+	\begin{algorithmic}[1]
+		\State $diffs \gets [0,\dots,2^n - 1, 0,\dots,2^n - 1]$
+		\State $T \gets$ array$[0 \dots 2^n - 1,0 \dots 2^n - 1, 0 \dots 2^n - 1]$
+		\For {$i = 0 \to N_s$}
+			\State $P \gets RandomBytes(16)$
+			\State $start \gets time()$
+			\State $C \gets E_K(P)$
+			\State $end \gets time()$
+			\State $tt \gets (start - end)$
+			\For {$i,j$ in $C$}
+				\State $T[i,j,C_i \oplus C_j] \gets T[i,j,C_i \oplus C_j] + tt$
+			\EndFor
+		\EndFor
+		\State $T[i,j,\Delta_{i,j}] \gets T[i,j,\Delta_{i,j}] / N_s$
+		\State $\Delta_{i,j}' \gets min(T,i,j)$ \Comment{Use t-test if necessary}
+		\Return all $\Delta_{i,j}'$
+	\end{algorithmic}
+	\end{numberedAlg} 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Final Round Attack Algorithm (cont'd)}
+	With knowledge of $\Delta_{i,j}$ for all $i,j$ such that $\Delta_{i,j} = k_i^{10} \oplus k_j^{10}$ the attacker can now make informed guesses at the key
+	
+	\bigskip
+	
+	TODO: example of how they would recover it here...
+	
+	\bigskip
+	
+	Thanks to Rijndael's invertible key schedule, $[k^{10}]$ can be reverted back to $[k^{0}]$.
+	
+	\bigskip
+	
+	Done.
 \end{frame}
 
 \begin{frame}
