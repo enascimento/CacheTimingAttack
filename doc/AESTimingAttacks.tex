@@ -96,7 +96,13 @@ In reality, it's hard to prevent additional information from being leaked at run
 \begin{frame}
 	\frametitle{History of Timing Attacks on Cryptographic Primitives}
 	\begin{itemize}
-		\item LIST OF PAPERS FROM BONNEAU HISTORY
+		\item RSA's modular exponentiation ($c \equiv m^e (\mod n)$)
+		\begin{itemize}
+			\item Square-and-multiply algorithms for $\mathcal{O}(\log_2(n))$ complexity has branch statement whose execution depends directly on $e$.
+		\end{itemize}
+		\item Branch statements to compute the multiplicative inverse of elements in $GF(2^8)$ [3].
+		\item Timing attacks against OpenSSL [4].
+		\item Cacche hit ratio is predicted to be a fruitful side-channel for launching attacks [5].
 	\end{itemize}
 \end{frame}
 
@@ -211,13 +217,15 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 	\begin{algorithmic}[1]
 		\State $n \gets 2^8 - 1$
 		\State $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
-		\For {$i = 0 \to N_s$}
+		\For {$count = 0 \to N_s$}
 			\State $P \gets RandomBytes(16)$
 			\State $start \gets time()$
 			\State $C \gets E_K(P)$
 			\State $end \gets time()$
 			\State $tt \gets (start - end)$
-			\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
+			\For {all $i,j$} \Comment{$i,j$ are input bytes of the \emph{same} T-box}
+				\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
+			\EndFor
 		\EndFor
 		\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
 		\State $mi,mj \gets min(t)$ \Comment{Use t-test if necessary}
@@ -300,10 +308,22 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 	\bigskip 
 	
 	$c_i \oplus c_j \not= k_i^{10} \oplus k_j^{10} \Rightarrow$ two different values came out of the LUT!
-	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{S-Box Nonlinearity}
+\begin{figure}
+\centering
+\includegraphics[scale = 0.6]{images/sboxLutDiff.pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Final Round Misses (cont'd)}
 	\bigskip
 	
-	The \emph{S-box nonlinearity} means that the difference between $S[x_s]$ and $S[x_t]$ \emph{does not} imply a similar difference between $x_s$ and $x_t$. 
+	The \emph{S-box nonlinearity} means that the difference between $S[x_s]$ and $S[x_t]$ \emph{does not} imply a fixed difference between $x_s$ and $x_t$. 
 	
 	\bigskip
 	
@@ -314,9 +334,10 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 	\frametitle{Final Round Attack Algorithm}
 	\begin{numberedAlg}[LastRoundAttack($N_s$)]
 	\begin{algorithmic}[1]
+		\State $n \gets 2^8 - 1$
 		\State $diffs \gets [0,\dots,2^n - 1, 0,\dots,2^n - 1]$
 		\State $T \gets$ array$[0 \dots 2^n - 1,0 \dots 2^n - 1, 0 \dots 2^n - 1]$
-		\For {$i = 0 \to N_s$}
+		\For {$count = 0 \to N_s$}
 			\State $P \gets RandomBytes(16)$
 			\State $start \gets time()$
 			\State $C \gets E_K(P)$
@@ -328,7 +349,7 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 		\EndFor
 		\State $T[i,j,\Delta_{i,j}] \gets T[i,j,\Delta_{i,j}] / N_s$
 		\State $\Delta_{i,j}' \gets min(T,i,j)$ \Comment{Use t-test if necessary}
-		\Return all $\Delta_{i,j}'$
+		\State \textbf{return} all $\Delta_{i,j}'$
 	\end{algorithmic}
 	\end{numberedAlg} 
 \end{frame}
@@ -337,9 +358,9 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 	\frametitle{Final Round Attack Algorithm (cont'd)}
 	With knowledge of $\Delta_{i,j}$ for all $i,j$ such that $\Delta_{i,j} = k_i^{10} \oplus k_j^{10}$ the attacker can now make informed guesses at the key
 	
-	% \bigskip
+	\bigskip
 	
-	% TODO: example of how they would recover it here...
+	caw: I think I should include an example here
 	
 	\bigskip
 	
@@ -353,16 +374,19 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 \begin{frame}
 	\frametitle{Timing Attack Countermeasures}
 	\begin{itemize}
-		\item Keep?
+		\item caw: keep?
 	\end{itemize}
 \end{frame}	
 
 \begin{frame}
 	\frametitle{References}
 	\begin{itemize}
-		\item [1] Joseph Bonneau and Ilya Mironov. Cache-collision timing attacks against AES. \emph{Cryptographic Hardware and Embedded Systems CHES 2006}, Springer Berlin Heidelberg, (2006), 201-215.
-		\item [2] Daniel J. Bernstein. Cache-timing attacks on AES. April 2005. 
+		\item [1] J. Bonneau, I. Mironov. Cache-collision timing attacks against AES. \emph{Cryptographic Hardware and Embedded Systems CHES 2006}, Springer Berlin Heidelberg, (2006), 201-215.
+		\item [2] D. J. Bernstein. Cache-timing attacks on AES. April 2005. 
 		{\tt http://cr.yp.to/antiforgery/cachetiming-20050414.pdf}.
+		\item [3] F. Koeune, J. J. Quisquater. A timing attack against Rijndael. \emph{Technical Report CG-1999/1}, June 1999.
+		\item [4] D. Brumley, D. Boneh. Remote timing attacks are practical. \emph{Computer Networks} \textbf{48(5)} (2005), 701-706.
+		\item [5] J. Kelsey, B. Schneier, D. Wagner, C. Hall. Side channel cryptanalysis of product ciphers. \emph{Journal of Computer Security} \textbf{8(2/3)} (2000). 
 	\end{itemize}
 \end{frame}	
 
