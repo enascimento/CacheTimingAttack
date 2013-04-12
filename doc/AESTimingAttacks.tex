@@ -1,4 +1,4 @@
-\documentclass[8pt,handout]{beamer}
+\documentclass[9pt,handout]{beamer}
 \usepackage{beamerthemesplit}
 \usepackage{pgfpages}
 \usepackage{verbatim}
@@ -81,9 +81,15 @@ In reality, it's hard to prevent additional information from being leaked at run
 
 \begin{frame}
 	\frametitle{Side Channel Attacks}
-	\textbf{Definition}: Any attack on a cryptosystem using information leaked given off as a byproduct of the physical implementation of the cryptosystem, rather than a theoretical weakness (TODO: CITE jbonneau), is a \emph{side channel attack}.
-	\medskip
+	\textbf{Definition}: Any attack on a cryptosystem using information leaked given off as a byproduct of the physical implementation of the cryptosystem, rather than a theoretical weakness [1], is a \emph{side channel attack}.
+
+	\bigskip
+
 	We focus on \textbf{timing attacks} for \textbf{software implementations} of AES.
+
+	\bigskip
+
+	We assume the attacker can \emph{easily} capture this timing information.
 \end{frame}
 
 \section{History of Timing Attacks}
@@ -98,15 +104,20 @@ In reality, it's hard to prevent additional information from being leaked at run
 	\frametitle{Timing Attacks on AES}
 	\begin{itemize}
 		\item Rijndael was deemed not susceptible to timing attacks in the AES contest
-		\item AES targeted attacks can be \emph{statistical} (BERNSTEIN)
+		\item AES targeted attacks can be based on \emph{statistical} evidence [2].
 		\begin{itemize}
-			\item Observation: The entire encryption time can be affected
-			\item Step 1: 
-			\item Step 2: 
+			\item Observation: The entire encryption time can be affected by the input bytes $p_i^0 \oplus k_i^0$
+			\begin{itemize}
+				\item Why? % that value equals $x_i^0, which is the index into the LUT, and if collisions occur then encryption time is affected
+			\end{itemize}
+			\item Step 1: Capture timing data on a reference and target machine for each value of a particular input byte $p_i^0 \oplus k_i^0 = x_i^0$
+			\item Step 2: Perform correlation between reference and target data
+			\item Step 3: Heel click.
 		\end{itemize}
-		\item Or they can be more targeted
+		\item Or they can be more targeted:
 		\begin{itemize}
 			\item Exploit relationships between secret information of the primitive and known data.
+			\item This is the approach of Bonneau et al., among others.
 		\end{itemize}
 	\end{itemize}
 \end{frame}
@@ -114,24 +125,29 @@ In reality, it's hard to prevent additional information from being leaked at run
 \section{Cache Timing Attacks}
 \begin{frame}
 	\frametitle{Cache Memory}
-	TODO: how it's arranged, lines, and whatnot...
-	TODO: image of memory layout for the T\_boxes side by side..., and how cache lines may spread across all of them...
+\begin{figure}
+\centering
+\includegraphics[scale = 0.35]{images/aesCacheLines.pdf}
+\end{figure}
+$\langle x_i \rangle = \langle x_j \rangle$ are the higher bits of the data entry.
 
-$\langle l_i \rangle = \langle l_j \rangle$ are the lower bits of the data entry (data is put into cache based on its MSbits)
+\medskip
+
+Data is pulled into cache based on the most-significant bits in its address.
 \end{frame}
 
 \begin{frame}
 	\frametitle{Cache Collisions Reveal Weaknesses}
 	Let $T_E(K, P)$ be the encryption time for a plaintext $P$ using key $K$. 
-	Let $\bar{T}_E(K)$ be the $\frac{1}{n}\sum_{i = 1}^{n}T_E(K, P_i)$, where $P_i$ is a random plaintext from $\{0|1\}^{128}$.
+	Let $\bar{T}_E(K) = \frac{1}{n}\sum_{i = 1}^{n}T_E(K, P_i)$, where $P_i$ is a random plaintext from $\{0|1\}^{128}$.
 
-	\medskip
+	\bigskip
 
 	\textbf{Cache-Collision Assumption \cite{bonneau}}. For any pair of table lookups $i, j$, given
 a large enough number of \emph{random} AES encryption that use the \emph{same key}, $\bar{T}_E(K)$ will
 be lower when $\langle l_i \rangle = \langle l_j \rangle$ than when $\langle l_i \rangle \not= \langle l_j \rangle$
 
-	\medskip
+	\bigskip
 	
 	Note: The table lookup indices must be \emph{independent} for random plaintexts.
 \end{frame}
@@ -175,13 +191,12 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 \subsection{First Round Attack}
 \begin{frame}
 	\frametitle{First Round}
-	TODO: image of AES lookup after first round
+	% TODO: image of AES lookup after first round
 	\begin{itemize}
 		\item First round: $x_i^{0} = p_i \oplus k_i$
 		\item With the T-box implementation, $x_0^0$, $x_4^0$, $x_8^0$, and $x_{12}^0$ are 
 		used as indices into $T_0$
-		\item If we are looking for cache collisions, we must consider input bytes of the same ``family'' 
-		(i.e. incides into the same T-box)
+		\item If we are looking for cache collisions, we must consider input bytes of the same T-box.
 	\end{itemize}
 	\begin{align*}
 		\langle x_i^0 \rangle = \langle x_j^0 \rangle & \Rightarrow \langle p_i \rangle \oplus \langle k_i \rangle = \langle p_j \rangle \oplus \langle k_j \rangle \\
@@ -322,9 +337,9 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 	\frametitle{Final Round Attack Algorithm (cont'd)}
 	With knowledge of $\Delta_{i,j}$ for all $i,j$ such that $\Delta_{i,j} = k_i^{10} \oplus k_j^{10}$ the attacker can now make informed guesses at the key
 	
-	\bigskip
+	% \bigskip
 	
-	TODO: example of how they would recover it here...
+	% TODO: example of how they would recover it here...
 	
 	\bigskip
 	
@@ -338,7 +353,16 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 \begin{frame}
 	\frametitle{Timing Attack Countermeasures}
 	\begin{itemize}
-		\item Masking...
+		\item Keep?
+	\end{itemize}
+\end{frame}	
+
+\begin{frame}
+	\frametitle{References}
+	\begin{itemize}
+		\item [1] Joseph Bonneau and Ilya Mironov. Cache-collision timing attacks against AES. \emph{Cryptographic Hardware and Embedded Systems CHES 2006}, Springer Berlin Heidelberg, (2006), 201-215.
+		\item [2] Daniel J. Bernstein. Cache-timing attacks on AES. April 2005. 
+		{\tt http://cr.yp.to/antiforgery/cachetiming-20050414.pdf}.
 	\end{itemize}
 \end{frame}	
 
