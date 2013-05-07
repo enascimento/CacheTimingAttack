@@ -1,6 +1,7 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  12 APR 2013 11:49
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  7 MAY 2013 13:58
 entering extended mode
- restricted \write18 enabled.
+ \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
 **AESTimingAttacks.tex
 (./AESTimingAttacks.tex
@@ -1163,74 +1164,135 @@ LaTeX Font Info:    Font shape `T1/phv/m/sl' will be
 (Font)              scaled to size 5.39996pt on input line 107.
  [5
 
-] [6
-
 ]
-<images/aesCacheLines.pdf, id=128, 831.85782pt x 231.11343pt>
+<images/bernstein.png, id=119, 302.63063pt x 260.47313pt>
+File: images/bernstein.png Graphic file (type png)
+
+<use images/bernstein.png>
+Package pdftex.def Info: images/bernstein.png used on input line 135.
+(pdftex.def)             Requested size: 105.9223pt x 91.16695pt.
+ [6
+
+ <./images/bernstein.png>]
+<images/aesCacheLines.pdf, id=130, 831.85782pt x 231.11343pt>
 File: images/aesCacheLines.pdf Graphic file (type pdf)
 
 <use images/aesCacheLines.pdf>
-Package pdftex.def Info: images/aesCacheLines.pdf used on input line 143.
+Package pdftex.def Info: images/aesCacheLines.pdf used on input line 149.
 (pdftex.def)             Requested size: 291.1546pt x 80.8909pt.
  [7
 
  <./images/aesCacheLines.pdf>]
+<images/cache_hit_miss.pdf, id=194, 461.47406pt x 380.17032pt>
+File: images/cache_hit_miss.pdf Graphic file (type pdf)
 
-LaTeX Warning: Citation `bonneau' on page 8 undefined on input line 159.
+<use images/cache_hit_miss.pdf>
+Package pdftex.def Info: images/cache_hit_miss.pdf used on input line 173.
+(pdftex.def)             Requested size: 175.36195pt x 144.46622pt.
+
+Overfull \hbox (21.71703pt too wide) in paragraph at lines 173--173
+ [] 
+ []
 
 [8
 
-] [9
+ <./images/cache_hit_miss.pdf>] [9
 
 ] [10
 
-] [11
+]
+<images/aesRounds.pdf, id=245, 646.66594pt x 213.04594pt>
+File: images/aesRounds.pdf Graphic file (type pdf)
 
-] [12
+<use images/aesRounds.pdf>
+Package pdftex.def Info: images/aesRounds.pdf used on input line 214.
+(pdftex.def)             Requested size: 323.33217pt x 106.5227pt.
+
+Overfull \hbox (16.0423pt too wide) in paragraph at lines 214--214
+ [] 
+ []
+
+[11
+
+ <./images/aesRounds.pdf>]
+<images/aesAttack_first.pdf, id=278, 651.18282pt x 172.39406pt>
+File: images/aesAttack_first.pdf Graphic file (type pdf)
+
+<use images/aesAttack_first.pdf>
+Package pdftex.def Info: images/aesAttack_first.pdf used on input line 231.
+(pdftex.def)             Requested size: 325.5906pt x 86.19681pt.
+
+Overfull \hbox (18.30074pt too wide) in paragraph at lines 231--231
+ [] 
+ []
+
+<images/first.png, id=279, 869.49844pt x 271.0125pt>
+File: images/first.png Graphic file (type png)
+ <use images/first.png>
+Package pdftex.def Info: images/first.png used on input line 231.
+(pdftex.def)             Requested size: 260.85155pt x 81.30437pt.
+
+[12
+
+ <./images/aesAttack_first.pdf> <./images/first.png>]
+File: images/aesAttack_first.pdf Graphic file (type pdf)
+
+<use images/aesAttack_first.pdf>
+Package pdftex.def Info: images/aesAttack_first.pdf used on input line 244.
+(pdftex.def)             Requested size: 325.5906pt x 86.19681pt.
+
+Overfull \hbox (18.30074pt too wide) in paragraph at lines 244--244
+ [] 
+ []
+
+<images/firstCircled.png, id=313, 869.49844pt x 271.0125pt>
+File: images/firstCircled.png Graphic file (type png)
+
+<use images/firstCircled.png>
+Package pdftex.def Info: images/firstCircled.png used on input line 244.
+(pdftex.def)             Requested size: 260.85155pt x 81.30437pt.
+ [13
+
+ <./images/firstCircled.png>] [14
 
 ]
 \openout4 = `AESTimingAttacks.vrb'.
 
- (./AESTimingAttacks.vrb
+
+(./AESTimingAttacks.vrb
 LaTeX Font Info:    Font shape `T1/phv/m/sc' will be
 (Font)              scaled to size 8.09995pt on input line 2.
-) [13
+) [15
+
+] [16
 
 ]
-<images/first.png, id=256, 869.49844pt x 271.0125pt>
-File: images/first.png Graphic file (type png)
- <use images/first.png>
-Package pdftex.def Info: images/first.png used on input line 247.
-(pdftex.def)             Requested size: 260.85155pt x 81.30437pt.
+<images/aesAttack_last.pdf, id=361, 642.14906pt x 172.39406pt>
+File: images/aesAttack_last.pdf Graphic file (type pdf)
 
-[14
+<use images/aesAttack_last.pdf>
+Package pdftex.def Info: images/aesAttack_last.pdf used on input line 321.
+(pdftex.def)             Requested size: 321.07375pt x 86.19681pt.
 
- <./images/first.png>]
-<images/firstCircled.png, id=270, 869.49844pt x 271.0125pt>
-File: images/firstCircled.png Graphic file (type png)
+Overfull \hbox (13.78387pt too wide) in paragraph at lines 321--321
+ [] 
+ []
 
-<use images/firstCircled.png>
-Package pdftex.def Info: images/firstCircled.png used on input line 255.
-(pdftex.def)             Requested size: 260.85155pt x 81.30437pt.
- [15
+[17
 
- <./images/firstCircled.png>] [16
-
-] [17
-
-]
-[18
+ <./images/aesAttack_last.pdf>] [18
 
 ] [19
 
-] <images/sboxLutDiff.pdf, id=330, 384.6872pt x 357.58594pt>
+]
+<images/sboxLutDiff.pdf, id=418, 384.6872pt x 357.58594pt>
 File: images/sboxLutDiff.pdf Graphic file (type pdf)
 
 <use images/sboxLutDiff.pdf>
-Package pdftex.def Info: images/sboxLutDiff.pdf used on input line 320.
+Package pdftex.def Info: images/sboxLutDiff.pdf used on input line 355.
 (pdftex.def)             Requested size: 230.81409pt x 214.5532pt.
 
-Overfull \vbox (14.8075pt too high) detected at line 320
+Overfull \vbox (14.8075pt too high) detected at line 355
  []
 
 [20
@@ -1238,7 +1300,7 @@ Overfull \vbox (14.8075pt too high) detected at line 320
  <./images/sboxLutDiff.pdf>] [21
 
 ]
-Overfull \vbox (3.70934pt too high) detected at line 355
+Overfull \vbox (3.70934pt too high) detected at line 390
  []
 
 [22
@@ -1248,7 +1310,7 @@ Overfull \vbox (3.70934pt too high) detected at line 355
 ] [24
 
 ]
-LaTeX Font Info:    Try loading font information for T1+pcr on input line 391.
+LaTeX Font Info:    Try loading font information for T1+pcr on input line 437.
  (/usr/local/texlive/2012/texmf-dist/tex/latex/psnfss/t1pcr.fd
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
@@ -1264,27 +1326,23 @@ File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 \tf@snm=\write9
 \openout9 = `AESTimingAttacks.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 400.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 400.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 446.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 446.
  (./AESTimingAttacks.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 400.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 400.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 446.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 446.
 Package rerunfilecheck Info: File `AESTimingAttacks.out' has not changed.
-(rerunfilecheck)             Checksum: E7D026C94C2D5390465437A27401B8AA;449.
-
-
-LaTeX Warning: There were undefined references.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 400.
+(rerunfilecheck)             Checksum: 43A32441CD2E38385BDB1AA884A028B8;454.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 446.
  ) 
 Here is how much of TeX's memory you used:
- 17510 strings out of 493488
- 323534 string characters out of 3141326
- 492165 words of memory out of 3000000
- 20245 multiletter control sequences out of 15000+200000
- 73872 words of font info for 107 fonts, out of 3000000 for 9000
+ 17543 strings out of 493488
+ 324213 string characters out of 3141326
+ 493169 words of memory out of 3000000
+ 20264 multiletter control sequences out of 15000+200000
+ 78378 words of font info for 116 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
- 49i,16n,55p,434b,502s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 49i,16n,55p,434b,552s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/local/texlive/2012/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
 xlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texl
@@ -1297,10 +1355,10 @@ type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/u
 rw/helvetic/uhvro8a.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/urw/sym
 bol/usyr.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/urw/symbol/usyr.pf
 b>
-Output written on AESTimingAttacks.pdf (25 pages, 465202 bytes).
+Output written on AESTimingAttacks.pdf (25 pages, 810675 bytes).
 PDF statistics:
- 1013 PDF objects out of 1200 (max. 8388607)
- 904 compressed objects within 10 object streams
+ 1100 PDF objects out of 1200 (max. 8388607)
+ 980 compressed objects within 10 object streams
  59 named destinations out of 1000 (max. 500000)
- 129 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 154 words of extra memory for PDF output out of 10000 (max. 10000000)
 

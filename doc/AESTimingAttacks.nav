@@ -34,18 +34,18 @@
 \headcommand {\beamer@subsectionentry {0}{4}{1}{11}{LUT-Based Implementations of AES}}\headcommand {\beamer@subsectionpages {11}{10}}
 \headcommand {\slideentry {4}{1}{1}{11/11}{LUT-Based Implementations of AES}{0}}
 \headcommand {\beamer@framepages {11}{11}}
-\headcommand {\beamer@subsectionentry {0}{4}{2}{12}{First Round Attack}}\headcommand {\beamer@subsectionpages {11}{11}}
-\headcommand {\slideentry {4}{2}{1}{12/12}{First Round Attack}{0}}
+\headcommand {\slideentry {4}{1}{2}{12/12}{LUT-Based Implementations of AES}{0}}
 \headcommand {\beamer@framepages {12}{12}}
-\headcommand {\slideentry {4}{2}{2}{13/13}{First Round Attack}{0}}
+\headcommand {\slideentry {4}{1}{3}{13/13}{LUT-Based Implementations of AES}{0}}
 \headcommand {\beamer@framepages {13}{13}}
-\headcommand {\slideentry {4}{2}{3}{14/14}{First Round Attack}{0}}
+\headcommand {\beamer@subsectionentry {0}{4}{2}{14}{First Round Attack Idea}}\headcommand {\beamer@subsectionpages {11}{13}}
+\headcommand {\slideentry {4}{2}{1}{14/14}{First Round Attack Idea}{0}}
 \headcommand {\beamer@framepages {14}{14}}
-\headcommand {\slideentry {4}{2}{4}{15/15}{First Round Attack}{0}}
+\headcommand {\slideentry {4}{2}{2}{15/15}{First Round Attack Idea}{0}}
 \headcommand {\beamer@framepages {15}{15}}
-\headcommand {\slideentry {4}{2}{5}{16/16}{First Round Attack}{0}}
+\headcommand {\slideentry {4}{2}{3}{16/16}{First Round Attack Idea}{0}}
 \headcommand {\beamer@framepages {16}{16}}
-\headcommand {\beamer@subsectionentry {0}{4}{3}{17}{Last Round Attack}}\headcommand {\beamer@subsectionpages {12}{16}}
+\headcommand {\beamer@subsectionentry {0}{4}{3}{17}{Last Round Attack}}\headcommand {\beamer@subsectionpages {14}{16}}
 \headcommand {\slideentry {4}{3}{1}{17/17}{Last Round Attack}{0}}
 \headcommand {\beamer@framepages {17}{17}}
 \headcommand {\slideentry {4}{3}{2}{18/18}{Last Round Attack}{0}}

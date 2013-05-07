@@ -102,7 +102,7 @@ In reality, it's hard to prevent additional information from being leaked at run
 		\end{itemize}
 		\item Branch statements to compute the multiplicative inverse of elements in $GF(2^8)$ [3].
 		\item Timing attacks against OpenSSL [4].
-		\item Cacche hit ratio is predicted to be a fruitful side-channel for launching attacks [5].
+		\item Cache hit ratio is predicted to be a fruitful side-channel for launching attacks [5].
 	\end{itemize}
 \end{frame}
 
@@ -110,7 +110,7 @@ In reality, it's hard to prevent additional information from being leaked at run
 	\frametitle{Timing Attacks on AES}
 	\begin{itemize}
 		\item Rijndael was deemed not susceptible to timing attacks in the AES contest
-		\item AES targeted attacks can be based on \emph{statistical} evidence [2].
+		\item AES attacks can be based on \emph{statistical} evidence [2].
 		\begin{itemize}
 			\item Observation: The entire encryption time can be affected by the input bytes $p_i^0 \oplus k_i^0$
 			\begin{itemize}
@@ -120,6 +120,12 @@ In reality, it's hard to prevent additional information from being leaked at run
 			\item Step 2: Perform correlation between reference and target data
 			\item Step 3: Heel click.
 		\end{itemize}
+\vspace{-1em}
+\begin{figure}
+\centering
+\includegraphics[scale = 0.35]{images/bernstein.png}
+\end{figure}
+
 		\item Or they can be more targeted:
 		\begin{itemize}
 			\item Exploit relationships between secret information of the primitive and known data.
@@ -143,35 +149,43 @@ Data is pulled into cache based on the most-significant bits in its address.
 \end{frame}
 
 \begin{frame}
-	\frametitle{Cache Collisions Reveal Weaknesses}
+	\frametitle{Cache Collisions}
+
+\begin{columns}
+\column{.5\textwidth}
+	Let $a$ and $b$ be two memory addresses looked up in memory. Let $\langle a \rangle$ and $\langle b \rangle$ 
+	denote the MSBs of $a$ and $b$, respectively. 
+	\begin{itemize}
+		\item Cache memory is organized into \emph{lines}
+		\item Reads on $a$ and $b$ cause a collision if $\langle a \rangle = \langle b \rangle$ (assuming other memory reads
+		have not evicted (or invalidated) $a$ or $b$ from the cache. 
+		\item If $\langle a \rangle \not= \langle b \rangle$ then a cache collision \emph{might} occur.
+		\item We cannot say for certain whether or not the lower LSBs are equivalent...
+	\end{itemize}
+\column{.5\textwidth}
+	\begin{minipage}[c][.6\textheight][c]{\linewidth}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[scale=0.38]{images/cache_hit_miss.pdf} 
+		\end{figure}
+	\end{minipage}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Cache Collisions Assumption}
 	Let $T_E(K, P)$ be the encryption time for a plaintext $P$ using key $K$. 
 	Let $\bar{T}_E(K) = \frac{1}{n}\sum_{i = 1}^{n}T_E(K, P_i)$, where $P_i$ is a random plaintext from $\{0|1\}^{128}$.
 
 	\bigskip
 
-	\textbf{Cache-Collision Assumption \cite{bonneau}}. For any pair of table lookups $i, j$, given
+	\textbf{Cache-Collision Assumption [1]}. For any pair of table lookups $i, j$, given
 a large enough number of \emph{random} AES encryption that use the \emph{same key}, $\bar{T}_E(K)$ will
 be lower when $\langle l_i \rangle = \langle l_j \rangle$ than when $\langle l_i \rangle \not= \langle l_j \rangle$
 
 	\bigskip
 	
 	Note: The table lookup indices must be \emph{independent} for random plaintexts.
-\end{frame}
-
-\begin{frame}
-	\frametitle{Cache Collisions (cont'd)}
-	Let $a$ and $b$ be two memory addresses looked up in memory. Let $\langle a \rangle$ and $\langle b \rangle$ 
-	denote the MSBs of $a$ and $b$, respectively. 
-	\begin{itemize}
-		\item Cache memory is organized into \emph{lines}
-		\begin{itemize}
-			\item MSB is mapped to the cache line index, LSB is mapped to the line (block) offset
-		\end{itemize}
-		\item Reads on $a$ and $b$ cause a collision if $\langle a \rangle = \langle b \rangle$ (assuming other memory reads
-		have not evicted (or invalidated) $a$ or $b$ from the cache. 
-		\item If $\langle a \rangle \not= \langle b \rangle$ then a cache collision \emph{might} occur.
-		\item We cannot say for certain whether or not the lower LSBs are equivalent...
-	\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -185,6 +199,11 @@ be lower when $\langle l_i \rangle = \langle l_j \rangle$ than when $\langle l_i
 \subsection{LUT-Based Implementations of AES}
 \begin{frame}
 	\frametitle{LUT-Based Implementations}
+	\vspace{-4em}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=0.5]{images/aesRounds.pdf} 
+	\end{figure}
 	Let $X^i$ be the state of AES at round $i$. With the exception of $i = 10$, we have:
 \begin{align*}
 X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{15}^i] \oplus \{k_0^i, k_1^i, k_2^i, k_3^i\}, \\
@@ -194,7 +213,37 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 \end{align*}
 \end{frame}
 
-\subsection{First Round Attack}
+\begin{frame}
+	\frametitle{First Round Attack}
+\vspace{-4em}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5]{images/aesAttack_first.pdf} 
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[scale = 0.3]{images/first.png}
+\end{figure}	
+	
+%	TODO: show how selection of the six equations works... circle relations on the matrix...
+%	0/4, 0/8, 0/12, 4/8, 4/12, 8/12 (six for each T-box), can try to solve from there
+%	Limitation: We only know the upper bytes, we cna't figure out the block offset...
+\end{frame}
+
+\begin{frame}
+	\frametitle{First Round Attack (cont'd)}
+\vspace{-4em}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5]{images/aesAttack_first.pdf} 
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[scale = 0.3]{images/firstCircled.png}
+\end{figure}	
+\end{frame}
+
+\subsection{First Round Attack Idea}
 \begin{frame}
 	\frametitle{First Round}
 	% TODO: image of AES lookup after first round
@@ -212,46 +261,27 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 
 \begin{frame}[fragile]
 	\frametitle{First Round Attack Algorithm}
-	\begin{numberedAlg}[FirstRoundAttack($N_s$)]
+	\begin{numberedAlg}[FirstRoundAttackSetup($N_s$)]
 	\label{eea}
 	\begin{algorithmic}[1]
-		\State $n \gets 2^8 - 1$
-		\State $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
+		\State $n \gets 2^8 - 1$, $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
 		\For {$count = 0 \to N_s$}
-			\State $P \gets RandomBytes(16)$
+			\State $p \gets RandomBytes(16)$
 			\State $start \gets time()$
-			\State $C \gets E_K(P)$
+			\State $c \gets E_K(p)$ \Comment{Time the encryption}
 			\State $end \gets time()$
-			\State $tt \gets (start - end)$
+			\State $tt \gets (start - end)$ \Comment{Increment the time for this particular plaintext difference}
 			\For {all $i,j$} \Comment{$i,j$ are input bytes of the \emph{same} T-box}
 				\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
 			\EndFor
 		\EndFor
-		\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
-		\State $mi,mj \gets min(t)$ \Comment{Use t-test if necessary}
-		\State $\langle k_{mi} \rangle \oplus \langle k_{mj} \rangle \gets \langle p_{mi} \rangle \oplus \langle p_{mj} \rangle$
+		\State $T[i,j,\Delta_{i,j}] \gets T[i,j,\Delta_{i,j}] / N_s$ \Comment{Compute the average time for all $i,j$ pairs}
+		\State $\{\Delta_{0,1}', \Delta_{0,1}',\dots,\Delta_{i,j}'\} \gets min(T)$ \Comment{Find the lowest average time for each $i,j$ pair}
+		\State $\langle k_{i} \rangle \oplus \langle k_{j} \rangle \gets \Delta_{i,j}'$ for all $i,j$ pairs \Comment{Guess: $\langle k_i\rangle \oplus \langle k_j \rangle = \Delta_{mi,mj}$}
 	\end{algorithmic}
+
+	% for i,j with lowest average delta, the key guess is ki \oplus kj = \Delta_{i,j}
 	\end{numberedAlg} 
-\end{frame}
-
-\begin{frame}
-	\frametitle{First Round Attack Algorithm (cont'd)}
-\begin{figure}
-\centering
-\includegraphics[scale = 0.3]{images/first.png}
-\end{figure}	
-	
-%	TODO: show how selection of the six equations works... circle relations on the matrix...
-%	0/4, 0/8, 0/12, 4/8, 4/12, 8/12 (six for each T-box), can try to solve from there
-%	Limitation: We only know the upper bytes, we cna't figure out the block offset...
-\end{frame}
-
-\begin{frame}
-	\frametitle{First Round Attack Algorithm (cont'd)}
-\begin{figure}
-\centering
-\includegraphics[scale = 0.3]{images/firstCircled.png}
-\end{figure}	
 \end{frame}
 
 \begin{frame}
@@ -259,13 +289,13 @@ X^{i+1} = \{ & T_0[x_0^i] \oplus T_1[x_5^i] \oplus T_2[x_{10}^i] \oplus T_3[x_{1
 %	TODO: show how selection of the six equations works... circle relations on the matrix...
 %	0/4, 0/8, 0/12, 4/8, 4/12, 8/12 (six for each T-box), can try to solve from there
 %	Limitation: We only know the upper bytes, we cna't figure out the block offset...
-We only know that $\langle k_0 \rangle \oplus \langle k_4 \rangle = \Delta_1$, $\langle k_0 \rangle \oplus \langle k_8 \rangle = \Delta_2$,
-$\langle k_0 \rangle \oplus \langle k_{12} \rangle = \Delta_3$, $\langle k_4 \rangle \oplus \langle k_8 \rangle = \Delta_4$, 
-$\langle k_4 \rangle \oplus \langle k_{12} \rangle = \Delta_5$, and $\langle k_8 \rangle \oplus \langle k_{12} \rangle = \Delta_6$.
+We only know that $\langle k_0 \rangle \oplus \langle k_4 \rangle = \Delta_{0,4}$, $\langle k_0 \rangle \oplus \langle k_8 \rangle = \Delta_{0,8}$,
+$\langle k_0 \rangle \oplus \langle k_{12} \rangle = \Delta_{0,12}$, $\langle k_4 \rangle \oplus \langle k_8 \rangle = \Delta_{4,8}$, 
+$\langle k_4 \rangle \oplus \langle k_{12} \rangle = \Delta_{4,12}$, and $\langle k_8 \rangle \oplus \langle k_{12} \rangle = \Delta_{8,12}$.
 
 \bigskip
 
-Of course, there exists \textbf{18} other equations we can derive for $T_1$, $T_2$, and $T_3$.
+There exists \textbf{18} other equations we can derive for $T_1$, $T_2$, and $T_3$.
 
 \bigskip
 
@@ -276,6 +306,11 @@ We cannot determine the lower $\log_2$ bits of each key... What to do now?
 \subsection{Last Round Attack}
 \begin{frame}
 	\frametitle{The Last Round}
+	\vspace{-4em}
+\begin{figure}
+\centering
+\includegraphics[scale = 0.5]{images/aesAttack_last.pdf}
+\end{figure}
 	When $i = 10$, the lookup table is just the S-box $S$. At this point, the ciphertext $C$ is:
 \begin{align*}
 C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}] \oplus k_2^{10}, S[x_{15}^{10}] \oplus k_3^{10}, \\
@@ -332,35 +367,41 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 
 \begin{frame}
 	\frametitle{Final Round Attack Algorithm}
-	\begin{numberedAlg}[LastRoundAttack($N_s$)]
+	\begin{numberedAlg}[LastRoundAttackSetup($N_s$)]
 	\begin{algorithmic}[1]
 		\State $n \gets 2^8 - 1$
 		\State $diffs \gets [0,\dots,2^n - 1, 0,\dots,2^n - 1]$
 		\State $T \gets$ array$[0 \dots 2^n - 1,0 \dots 2^n - 1, 0 \dots 2^n - 1]$
 		\For {$count = 0 \to N_s$}
-			\State $P \gets RandomBytes(16)$
+			\State $p \gets RandomBytes(16)$
 			\State $start \gets time()$
-			\State $C \gets E_K(P)$
+			\State $c \gets E_K(p)$ \Comment{Time the encryption}
 			\State $end \gets time()$
-			\State $tt \gets (start - end)$
-			\For {$i,j$ in $C$}
+			\State $tt \gets (start - end)$ \Comment{Increment the time for this particular plaintext difference}
+			\For {all $i,j$} \Comment{$i,j$ are input bytes of the \emph{same} T-box}
 				\State $T[i,j,C_i \oplus C_j] \gets T[i,j,C_i \oplus C_j] + tt$
 			\EndFor
 		\EndFor
-		\State $T[i,j,\Delta_{i,j}] \gets T[i,j,\Delta_{i,j}] / N_s$
-		\State $\Delta_{i,j}' \gets min(T,i,j)$ \Comment{Use t-test if necessary}
-		\State \textbf{return} all $\Delta_{i,j}'$
+		\State $T[i,j,\Delta_{i,j}] \gets T[i,j,\Delta_{i,j}] / N_s$ 
+		\State $\{\Delta_{0,1}', \Delta_{0,1}',\dots,\Delta_{i,j}'\} \gets min(T)$ 
+		\State $\langle k_{i} \rangle \oplus \langle k_{j} \rangle \gets \Delta_{i,j}'$ for all $i,j$ pairs \Comment{Guess: $\langle k_i\rangle \oplus \langle k_j \rangle = \Delta_{mi,mj}$}
 	\end{algorithmic}
 	\end{numberedAlg} 
 \end{frame}
 
 \begin{frame}
 	\frametitle{Final Round Attack Algorithm (cont'd)}
-	With knowledge of $\Delta_{i,j}$ for all $i,j$ such that $\Delta_{i,j} = k_i^{10} \oplus k_j^{10}$ the attacker can now make informed guesses at the key
-	
-	\bigskip
-	
-	caw: I think I should include an example here
+	With knowledge of $\Delta_{i,j}$ for all $i,j$ such that $\Delta_{i,j} = k_i^{10} \oplus k_j^{10}$ the attacker can now make informed guesses at the key:
+	\begin{itemize}
+		\item Idea (1): Define a cost function $c(i,j,\Delta_{i,j})$ such that the output of this function is \emph{low} if $\Delta_{i,j}$ is low.
+		\item Idea (2): The correct key will yield the lowest value for the cost function when all of the input sums are considered 
+		\begin{itemize}
+			\item Minimize the sum of all costs for a given key $K$
+			\item $C[K] = \sum_{i,j}c(i,j,\Delta_{i,j})$
+		\end{itemize}
+		\item Goal: Find the correct key guess that minimizes the total cost
+		\item Approach: Local optimization search, where each new candidate key guess is obtained by changing one byte of the key.
+	\end{itemize}
 	
 	\bigskip
 	
@@ -374,7 +415,12 @@ C = \{ & S[x_0^{10}] \oplus k_0^{10}, S[x_5^{10}] \oplus k_1^{10}, S[x_{10}^{10}
 \begin{frame}
 	\frametitle{Timing Attack Countermeasures}
 	\begin{itemize}
-		\item caw: keep?
+		\item Avoid memory access altogether
+		\item Use alternative lookup-tables (i.e. non T-box implementation, similar to the fourth)
+		\item Data-independent memory access patterns % read all elements of the t_box and only keep the one of interest...
+		\item Mask (randomize) data-dependent techniques
+		\item Disable cache :-(
+		\item Use processor-specific instructions for AES encryption (e.g. Intel's AES ISA)
 	\end{itemize}
 \end{frame}	
 

@@ -1,21 +1,22 @@
 \frametitle{First Round Attack Algorithm}
-\begin{numberedAlg}[FirstRoundAttack($N_s$)]
+\begin{numberedAlg}[FirstRoundAttackSetup($N_s$)]
 \label{eea}
 \begin{algorithmic}[1]
-\State $n \gets 2^8 - 1$
-\State $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
+\State $n \gets 2^8 - 1$, $T \gets$ array$[0 \dots n,1 \dots n, 0 \dots n]$
 \For {$count = 0 \to N_s$}
-\State $P \gets RandomBytes(16)$
+\State $p \gets RandomBytes(16)$
 \State $start \gets time()$
-\State $C \gets E_K(P)$
+\State $c \gets E_K(p)$ \Comment{Time the encryption}
 \State $end \gets time()$
-\State $tt \gets (start - end)$
+\State $tt \gets (start - end)$ \Comment{Increment the time for this particular plaintext difference}
 \For {all $i,j$} \Comment{$i,j$ are input bytes of the \emph{same} T-box}
 \State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] + tt$
 \EndFor
 \EndFor
-\State $T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] \gets T[i,j,\langle p_i \rangle \oplus \langle p_j \rangle] / N_s$
-\State $mi,mj \gets min(t)$ \Comment{Use t-test if necessary}
-\State $\langle k_{mi} \rangle \oplus \langle k_{mj} \rangle \gets \langle p_{mi} \rangle \oplus \langle p_{mj} \rangle$
+\State $T[i,j,\Delta_{i,j}] \gets T[i,j,\Delta_{i,j}] / N_s$ \Comment{Compute the average time for all $i,j$ pairs}
+\State $\{\Delta_{0,1}', \Delta_{0,1}',\dots,\Delta_{i,j}'\} \gets min(T)$ \Comment{Find the lowest average time for each $i,j$ pair}
+\State $\langle k_{i} \rangle \oplus \langle k_{j} \rangle \gets \Delta_{i,j}'$ for all $i,j$ pairs \Comment{Guess: $\langle k_i\rangle \oplus \langle k_j \rangle = \Delta_{mi,mj}$}
 \end{algorithmic}
+
+% for i,j with lowest average delta, the key guess is ki \oplus kj = \Delta_{i,j}
 \end{numberedAlg}
